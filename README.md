@@ -11,13 +11,12 @@ MonApplication
 --
 
 - 2.1 Cloner le repository et se placer sur la branche 'master'.
-- 2.2 Importer le projet dans votre IDE préféré (de préférence un qui a le thème Darcula ;)).
+- 2.2 Importer le projet dans votre IDE préféré.
 - 2.3 Configurer un émulateur Android qui cible la version 21 (19 minimum) et le démarrer.
-Exemple :
-Name : MonAppli_AVD
-CPU/ABI: ARM(armeabi-v7a)
-Path:*chemin*\.android\avd\MonAppli_AVD.avd
-Target: Android 5.0 (API level 21)
-Skin : 800x1280
-
-hw.device.name : Nexus 7
+3. Exemple :
+- Name : MonAppli_AVD
+- CPU/ABI: ARM(armeabi-v7a)
+- Path:*chemin*\.android\avd\MonAppli_AVD.avd
+- Target: Android 5.0 (API level 21)
+- Skin : 800x1280
+- hw.device.name : Nexus 7
