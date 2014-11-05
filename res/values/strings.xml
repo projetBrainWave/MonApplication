@@ -7,6 +7,9 @@
    <string name="on">Turn On</string>
    <string name="off">Turn Off</string>
    <string name="Visible">Get Visible</string>
-   <string name="List">List Devices</string>
+   <string name="buttonPairedDevices">List Paired Devices</string>
+   <string name="buttonUnpairedDevices">List Unpaired Devices</string>
+   <string name="ListPairedDevices">List of Paired Devices :</string>
+   <string name="ListUnpairedDevices">List of Unpaired Devices :</string>
 
 </resources>
