@@ -14,7 +14,10 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.DataSetObserver;
 import android.view.Menu;
 import android.view.View;
@@ -29,11 +32,13 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	private Button On,Off,Visible,list,listUnpaired;
+	private Button On,Off,Visible,list,listAround;
 	private BluetoothAdapter BA;
 	private Set<BluetoothDevice>pairedDevices;
-	private ListView lvPaired , lvUnpaired;
-	private TextView tvPaired , tvUnpaired;
+	private ListView lvPaired , lvAround;
+	private TextView tvPaired , tvAround;
+	private ArrayList<String> tab;
+	private boolean discoveryFinished;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,19 +47,22 @@ public class MainActivity extends Activity {
 		Off = (Button)findViewById(R.id.button2);
 		Visible = (Button)findViewById(R.id.button3);
 		list = (Button)findViewById(R.id.button4);
-		listUnpaired = (Button)findViewById(R.id.button5);
+		listAround = (Button)findViewById(R.id.button5);
 
 		lvPaired = (ListView)findViewById(R.id.listView1);
-		lvUnpaired = (ListView)findViewById(R.id.listView2);
-		
+		lvAround = (ListView)findViewById(R.id.listView2);
+
 		tvPaired = (TextView)findViewById(R.id.TextView2);
-		tvUnpaired = (TextView)findViewById(R.id.TextView3);
+		tvAround = (TextView)findViewById(R.id.TextView3);
 
 		tvPaired.setVisibility(View.GONE);
-		tvUnpaired.setVisibility(View.GONE);
-		
-		
+		tvAround.setVisibility(View.GONE);
+
+		discoveryFinished = false;
 		BA = BluetoothAdapter.getDefaultAdapter();
+
+		
+		tab = new ArrayList<String>() ;
 	}
 
 	public void on(View view){
@@ -69,8 +77,8 @@ public class MainActivity extends Activity {
 	}
 	public void list(View view)
 	{
-		
-		
+
+
 		tvPaired.setVisibility(View.VISIBLE);
 		pairedDevices = BA.getBondedDevices();
 		ArrayList list = new ArrayList();
@@ -78,25 +86,72 @@ public class MainActivity extends Activity {
 		{
 			list.add(bt.getName());
 		}
-		Toast.makeText(getApplicationContext(),"Showing the " + list.size() + "paired device", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getApplicationContext(),"Showing the " + list.size() + " paired device", Toast.LENGTH_SHORT).show();
 		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,  list);
-		
+
 		lvPaired.setAdapter(adapter);
 	}
-	
-	public void listUnpaired(View view)
+
+	final BroadcastReceiver bluetoothReceiver = new BroadcastReceiver() 
 	{
+
+
+
+		public void onReceive(Context context, Intent intent)
+		{
+			
+			String action = intent.getAction();
+			
+			if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) 
+			{
+				Toast.makeText(getApplicationContext(), "La recherche commence" , Toast.LENGTH_SHORT).show();
+			}
+			
+			if (BluetoothDevice.ACTION_FOUND.equals(action)) 
+			{
+				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				Toast.makeText(getApplicationContext(), "New Device = " + device.getName(), Toast.LENGTH_SHORT).show();
+				tab.add(device.getName());
+
+			}
+			
+			if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) 
+			{
+				discoveryFinished = true;
+				listAround(listAround);
+				
+			}
+		}
+	};
+
+	public void listAround(View view)
+	{
+
+		if (discoveryFinished )
+		{
+			tvAround.setVisibility(View.VISIBLE);
+	
+			ArrayList list = new ArrayList();
+			for (int i = 0 ;i<tab.size(); i++)
+			{
+				list.add(tab.get(i));
+			}
+			
+			Toast.makeText(getApplicationContext(),"Showing the " + list.size() + " device(s) that are around", Toast.LENGTH_SHORT).show();
+			ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,  list);
+	
+			lvAround.setAdapter(adapter);
+			discoveryFinished = false;
+		}
+		else
+		{
+			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+			filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+			filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+			registerReceiver(bluetoothReceiver, filter);
+			BA.startDiscovery();
+		}
 		
-		tvUnpaired.setVisibility(View.VISIBLE);
-		
-		ArrayList list = new ArrayList();
-		list.add("first unpaired device");
-		list.add("second unpaired device");
-		
-		Toast.makeText(getApplicationContext(),"Showing the " + list.size() + "unpaired device", Toast.LENGTH_SHORT).show();
-		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,  list);
-		
-		lvUnpaired.setAdapter(adapter);	
 	}
 	public void off(View view){
 		BA.disable();

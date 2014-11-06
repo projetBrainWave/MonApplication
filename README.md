@@ -4,7 +4,7 @@ MonApplication
 1. Introduction
 --
 
-- 1.1 Application permettant la connexion d'un appareil au bluetooth et l'affichage de la liste des appareils connectés
+- 1.1 Application permettant la connexion d'un appareil au bluetooth et l'affichage de la liste des appareils associés
 
 
 2. Setup
@@ -12,7 +12,7 @@ MonApplication
 
 - 2.1 Cloner le repository et se placer sur la branche 'master'.
 - 2.2 Importer le projet dans votre IDE préféré.
-- 2.3 Configurer un émulateur Android qui cible la version 21 (19 minimum) et le démarrer.
+- 2.3 Configurer un émulateur Android qui cible la version 21 (18 minimum) et le démarrer.
 
 3. Exemple :
 --
