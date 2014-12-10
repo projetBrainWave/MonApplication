@@ -64,7 +64,12 @@ public class MainActivity extends Activity {
 		
 		tab = new ArrayList<String>() ;
 	}
-
+	/**
+	 * Permet d'activer le bluetooth.
+	 * Une fois activé, on envoie un Toast confirmant l'action.
+	 * Si le bluetooth est déjà actif, on envoie une Toast disant qu'il est déjà actif.
+	 * @param view
+	 */
 	public void on(View view){
 		if (!BA.isEnabled()) {
 			Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -75,6 +80,13 @@ public class MainActivity extends Activity {
 			Toast.makeText(getApplicationContext(),"Already on",Toast.LENGTH_LONG).show();
 		}
 	}
+	
+	/**
+	 * Permet d'afficher la liste des appareils appairés
+	 * grâce à une ArrayList et parcours la liste en ajoutant 
+	 * à chaque tours de boucle un appareil.
+	 * @param view
+	 */
 	public void list(View view)
 	{
 
@@ -84,19 +96,26 @@ public class MainActivity extends Activity {
 		ArrayList list = new ArrayList();
 		for(BluetoothDevice bt : pairedDevices)
 		{
-			list.add(bt.getName());
+			list.add(bt.getName());//essayer avec getId pour ne pas avoir de doublons
 		}
 		Toast.makeText(getApplicationContext(),"Showing the " + list.size() + " paired device", Toast.LENGTH_SHORT).show();
 		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,  list);
 
 		lvPaired.setAdapter(adapter);
 	}
-
+	/**
+	 * Permet de chercher si des périphériques non connus sont disponibles pour un eventuel échange.
+	 * Cette action s’effectue en plusieurs étapes :
+	 * - Création un Broadcast receiver qui sera avertit lors de la détection d’un nouveau terminal
+	 * Nous utilisons un Broadcast Receiver afin de recevoir l’événement qui se propage lorsqu’un 
+	 * nouveau device est détecté.
+	 * - Enregistrement de notre broadcast.
+	 * - Lancement du scan grâce à la méthode startDiscovery
+	 * - Arrêt de la découverte des nouveaux devices en nous désabonnant de
+	 *  notre broadcast receiver grâce au onDestroy
+	 */
 	final BroadcastReceiver bluetoothReceiver = new BroadcastReceiver() 
 	{
-
-
-
 		public void onReceive(Context context, Intent intent)
 		{
 			
@@ -123,7 +142,10 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-
+	/**
+	 * Permet d'afficher la liste des appareils aux alentours
+	 * @param view
+	 */
 	public void listAround(View view)
 	{
 
@@ -153,11 +175,27 @@ public class MainActivity extends Activity {
 		}
 		
 	}
+	/**
+	 * Permet d'appairer l'appareil à un autre
+	 */
+	public void appairerDevice() {
+		Toast.makeText(null, "Appairage en cours", Toast.LENGTH_SHORT).show();
+	}
+	
+	/**
+	 * Permet de desactiver le bluethooth
+	 * @param view
+	 */
 	public void off(View view){
 		BA.disable();
 		Toast.makeText(getApplicationContext(),"Turned off" ,
 				Toast.LENGTH_LONG).show();
 	}
+	
+	/**
+	 * 
+	 * @param view
+	 */
 	public void visible(View view){
 		Intent getVisible = new Intent(BluetoothAdapter.
 				ACTION_REQUEST_DISCOVERABLE);
